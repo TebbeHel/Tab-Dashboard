@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2215%22%20fill%3D%22%23B96243%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2214%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%224%22%20fill%3D%22%23FBF3EC%22/%3E%3Crect%20x%3D%2234%22%20y%3D%2214%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%224%22%20fill%3D%22%23FBF3EC%22/%3E%3Crect%20x%3D%2214%22%20y%3D%2234%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%224%22%20fill%3D%22%23FBF3EC%22/%3E%3Crect%20x%3D%2234%22%20y%3D%2234%22%20width%3D%2216%22%20height%3D%2216%22%20rx%3D%224%22%20fill%3D%22%23F4DECF%22%20opacity%3D%220.7%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..900&family=Hanken+Grotesk:wght@400..800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Farben und Grundwerte (warm, matt, ruhig)
+   ============================================================ */
+:root{
+  --sand-50:#FCFAF5; --sand-100:#F6F0E7; --sand-150:#EFE7DA; --sand-200:#E6DBC9; --sand-300:#D6C8B2;
+  --warm-900:#221F1B; --warm-500:#6E6457; --warm-400:#948977;
+  --clay-700:#97492F; --clay-600:#AB5436; --clay-500:#B96243;
+  --font-display:'Schibsted Grotesk','Hanken Grotesk',system-ui,sans-serif;
+  --font-text:'Hanken Grotesk',system-ui,-apple-system,sans-serif;
+  --bg:var(--sand-100); --surface:var(--sand-50); --surface-2:#FFFFFF; --surface-inset:var(--sand-150);
+  --fg:var(--warm-900); --fg-secondary:var(--warm-500); --fg-muted:var(--warm-400); --fg-on-accent:#FBF3EC;
+  --border:var(--sand-200); --border-strong:var(--sand-300);
+  --primary:var(--clay-500); --primary-hover:var(--clay-600);
+  --radius-md:12px; --radius-xl:22px;
+  --shadow-xs:0 1px 2px rgba(34,31,27,.06);
+  --shadow-sm:0 1px 2px rgba(34,31,27,.05),0 2px 6px rgba(34,31,27,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-text)}
+a{color:var(--clay-600)} a:hover{color:var(--clay-700)}
+input::placeholder{color:var(--fg-muted)}
+
+html,body{height:100%}
+.wrap{max-width:1400px;margin:0 auto;padding:22px 36px 22px;height:100vh;display:flex;flex-direction:column;box-sizing:border-box}
+.top{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap}
+.top > div:first-child{width:350px;flex:none}
+.clock{font:700 56px/1 var(--font-display);letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.date{font:400 15px/1.4 var(--font-text);color:var(--fg-secondary);margin-top:6px}
+
+.search{flex:1;min-width:280px}
+.search form{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:6px 6px 6px 18px;box-shadow:var(--shadow-sm)}
+.search svg.lupe{color:var(--fg-muted);flex:none}
+.search input{flex:1;min-width:0;border:none;background:transparent;outline:none;font:400 15.5px/1.4 var(--font-text);color:var(--fg)}
+.search button{border:none;border-radius:999px;cursor:pointer;font:600 13.5px var(--font-text);transition:background 120ms}
+.btn-google{background:transparent;color:var(--fg-secondary);padding:8px 13px}
+.btn-google:hover{background:var(--surface-inset)}
+.btn-gemini{display:flex;align-items:center;gap:6px;background:var(--primary);color:var(--fg-on-accent);padding:8px 16px}
+.btn-gemini:hover{background:var(--primary-hover)}
+
+.main{display:flex;gap:14px;margin-top:16px;align-items:stretch;flex:1;min-height:0}
+.left{display:flex;flex-direction:column;gap:12px;width:350px;flex:none;min-height:0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);box-shadow:var(--shadow-xs)}
+.weather{padding:16px 20px;box-shadow:var(--shadow-sm);flex:none}
+.now{display:flex;align-items:center;gap:14px}
+.now .ico{color:var(--primary);display:flex}
+.temp{font:700 44px/1 var(--font-display);letter-spacing:-0.02em}
+.desc{font:400 13.5px/1.4 var(--font-text);color:var(--fg-secondary);margin-top:3px}
+.forecast{margin-top:12px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;border-top:1px solid var(--border);padding-top:10px}
+.frow{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;border-radius:10px}
+.frow.today{background:var(--surface-inset)}
+.frow .d{font:600 11.5px var(--font-text);color:var(--fg-secondary)}
+.frow .i{color:var(--fg-secondary);display:flex}
+.frow .mx{font:600 13px var(--font-text)}
+.frow .mn{font:400 11.5px var(--font-text);color:var(--fg-muted)}
+.news{padding:12px 16px 10px;flex:none}
+.news .label{display:flex;justify-content:space-between;align-items:center}
+.news .label small{font:400 11px var(--font-text);letter-spacing:0;text-transform:none;color:var(--fg-muted)}
+.nlist{margin-top:6px}
+.nitem{display:block;padding:6px 0;border-top:1px solid var(--border);text-decoration:none;color:var(--fg)}
+.nitem:first-child{border-top:none}
+.nitem:hover .nt{color:var(--clay-600)}
+.nt{font:600 13px/1.3 var(--font-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm{font:400 11px/1.3 var(--font-text);color:var(--fg-muted);margin-top:2px}
+.radar{padding:12px 12px 12px;flex:1;min-height:0;display:flex;flex-direction:column}
+.label{font:600 12px/1.3 var(--font-text);text-transform:uppercase;letter-spacing:.08em;color:var(--fg-muted)}
+.radar .label{margin:0 6px 8px}
+.radar .frame{border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;flex:1;min-height:140px;background:var(--surface-inset)}
+.radar iframe{width:100%;height:100%;border:none;display:block}
+
+.right{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+.group{padding:12px 16px 14px}
+.tiles{display:grid;gap:8px;margin-top:8px}
+.tile{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);text-decoration:none;color:var(--fg);transition:all 120ms cubic-bezier(.22,.61,.36,1)}
+.tile:hover{border-color:var(--border-strong);background:var(--surface-2);box-shadow:var(--shadow-xs);color:var(--fg)}
+.tile img{width:20px;height:20px;border-radius:4px;flex:none;object-fit:contain}
+.tile span{font:600 13.5px/1.2 var(--font-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hint{font:400 12.5px/1.4 var(--font-text);color:var(--fg-muted);margin-top:8px}
+
+@media (max-width:900px){
+  .wrap{height:auto;padding:20px 16px 32px}
+  .main{flex-wrap:wrap}
+  .left{width:100%}
+  .radar .frame{height:260px;flex:none}
+  .clock{font-size:44px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div>
+      <div class="clock" id="clock">--:--</div>
+      <div class="date" id="date"></div>
+    </div>
+    <div class="search">
+      <form id="searchForm">
+        <svg class="lupe" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input id="q" type="text" placeholder="Search or ask Gemini …" autocomplete="off" autofocus>
+        <button type="button" class="btn-google" id="btnGoogle">Google</button>
+        <button type="submit" class="btn-gemini" id="btnGemini"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"></path></svg>Gemini</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <div class="card weather">
+        <div class="now">
+          <span class="ico" id="curIcon"></span>
+          <div>
+            <div class="temp" id="temp">–</div>
+            <div class="desc" id="desc">Loading weather …</div>
+          </div>
+        </div>
+        <div class="forecast" id="forecast"></div>
+      </div>
+      <div class="card news" id="newsCard">
+        <div class="label"><span>News</span><small id="newsSrc"></small></div>
+        <div class="nlist" id="newsList"></div>
+      </div>
+      <div class="card radar">
+        <div class="label">Rain radar</div>
+        <div class="frame"><iframe id="radar" title="Rain radar"></iframe></div>
+      </div>
+    </div>
+
+    <div class="right" id="groups"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EINSTELLUNGEN: hier Links, Stadt und Uhr anpassen
+   ============================================================ */
+const RASTER = 5; // Kacheln pro Zeile
+const CONFIG = {
+  standortAbfragen: true,      // true = Browser-Standort nutzen, sonst Stadt
+  stadt: 'Oldenburg',          // Fallback, wenn kein Standort
+  sekunden: true,              // Uhr mit Sekunden?
+  news: 'tagesschau',          // 'tagesschau' (deutsch, direkt), 'bbc' (englisch, via rss2json) oder '' = aus
+  newsAnzahl: 3,               // Schlagzeilen
+  gruppen: [
+    // Jede Gruppe: "zeilen" = Liste von Zeilen, jede Zeile = Liste von Kacheln.
+    // Alle Zeilen nutzen das gleiche 5er-Raster (RASTER unten), Kacheln sind also überall gleich groß.
+    { label: 'Daily', zeilen: [
+      [ { name: 'Gmail User 1',  url: 'https://mail.google.com/mail/u/0/#inbox', ico: 'gs:gmail' },
+        { name: 'Gmail User 2', url: 'https://mail.google.com/mail/u/1/#inbox', ico: 'gs:gmail' } ],
+      [ { name: 'Drive',      url: 'https://drive.google.com',     ico: 'gs:drive' },
+        { name: 'Calendar',   url: 'https://calendar.google.com',  ico: 'gs:calendar' },
+        { name: 'Keep',       url: 'https://keep.google.com',      ico: 'gs:keep' },
+        { name: 'Translate', url: 'https://translate.google.com', ico: 'fav:translate.google.com' } ],
+    ]},
+    { label: 'AI', zeilen: [
+      [ { name: 'Claude',     url: 'https://claude.ai/new',        ico: 'fav:claude.ai' },
+        { name: 'Gemini',     url: 'https://gemini.google.com/app', ico: 'fav:gemini.google.com' },
+        { name: 'ChatGPT',    url: 'https://chatgpt.com',          ico: 'fav:chatgpt.com' },
+        { name: 'Grok',       url: 'https://grok.com',             ico: 'fav:grok.com' },
+        { name: 'Perplexity', url: 'https://www.perplexity.ai',    ico: 'fav:perplexity.ai' } ],
+    ]},
+    { label: 'Finance', zeilen: [
+      [ { name: 'Money Manager', url: 'https://script.google.com/macros/s/AKfycbzqMoL2YCPI8BPDP92H3B4lherK82EbJJPOkSKXCq-KrciJ_0qCfNQRG50Gon1kNTne2w/exec', ico: 'money' } ],
+    ]},
+    { label: 'Music', zeilen: [
+      [ { name: 'YouTube Music', url: 'https://music.youtube.com', ico: 'fav:music.youtube.com' },
+        { name: 'Spotify',       url: 'https://open.spotify.com',  ico: 'fav:open.spotify.com' } ],
+    ]},
+    { label: 'Streaming', zeilen: [
+      [ { name: 'YouTube',     url: 'https://www.youtube.com',    ico: 'fav:youtube.com' },
+        { name: 'Twitch',      url: 'https://www.twitch.tv',      ico: 'fav:twitch.tv' } ],
+      [ { name: 'Netflix',     url: 'https://www.netflix.com',    ico: 'fav:netflix.com' },
+        { name: 'Disney+',     url: 'https://www.disneyplus.com', ico: 'fav:disneyplus.com' },
+        { name: 'Prime Video', url: 'https://www.primevideo.com', ico: 'fav:primevideo.com' },
+        { name: 'MagentaTV',   url: 'https://web.magentatv.de',   ico: 'fav:web.magentatv.de' },
+        { name: 'RTL+',        url: 'https://plus.rtl.de',        ico: 'fav:plus.rtl.de' } ],
+      [ { name: 'Apple TV',    url: 'https://tv.apple.com',       ico: 'fav:tv.apple.com' },
+        { name: 'Joyn',        url: 'https://www.joyn.de',        ico: 'fav:joyn.de' } ],
+    ]},
+  ]
+};
+
+/* ---------- Icons ---------- */
+const MONEY_ICON = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#B96243"/><text x="32" y="45" text-anchor="middle" font-family="Schibsted Grotesk, Arial, sans-serif" font-size="36" font-weight="700" fill="#FBF3EC">M</text></svg>');
+function iconUrl(spec){
+  if (spec === 'money') return MONEY_ICON;
+  if (spec.startsWith('gs:'))  return 'https://www.gstatic.com/images/branding/product/2x/' + spec.slice(3) + '_2020q4_48dp.png';
+  if (spec.startsWith('fav:')) return 'https://www.google.com/s2/favicons?domain=' + spec.slice(4) + '&sz=64';
+  return spec;
+}
+
+/* ---------- Linkgruppen ---------- */
+(function renderGroups(){
+  const root = document.getElementById('groups');
+  CONFIG.gruppen.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'card group';
+    let html = '<div class="label">' + g.label + '</div>';
+    g.zeilen.forEach(z => {
+      const kacheln = z;
+      const spalten = RASTER;
+      html += '<div class="tiles" style="grid-template-columns:repeat(' + spalten + ',minmax(0,1fr))">' + kacheln.map(tile).join('') + '</div>';
+    });
+    card.innerHTML = html;
+    root.appendChild(card);
+  });
+  function tile(t){
+    return '<a class="tile" href="' + t.url + '" target="_blank" rel="noopener"><img src="' + iconUrl(t.ico) + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'"><span>' + t.name + '</span></a>';
+  }
+})();
+
+/* ---------- Uhr ---------- */
+(function clock(){
+  const el = document.getElementById('clock'), de = document.getElementById('date');
+  const pad = x => String(x).padStart(2,'0');
+  function tick(){
+    const n = new Date();
+    let t = pad(n.getHours()) + ':' + pad(n.getMinutes());
+    if (CONFIG.sekunden) t += ':' + pad(n.getSeconds());
+    el.textContent = t;
+    de.textContent = n.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* ---------- Suche ---------- */
+(function search(){
+  const q = document.getElementById('q');
+  // Alles öffnet in einem neuen Tab. Gemini nimmt keinen Text per Link an,
+  // deshalb wird die Eingabe in die Zwischenablage kopiert: in Gemini nur noch Cmd+V drücken.
+  function go(mode){
+    const v = q.value.trim();
+    let u;
+    if (mode === 'gemini') {
+      // ?prompt= wird von der Erweiterung "Gemini URL Prompt" gelesen und ins Eingabefeld gesetzt.
+      // Ohne Erweiterung ignoriert Gemini den Parameter; dann liegt der Text in der Zwischenablage (Cmd+V).
+      u = v ? 'https://gemini.google.com/app?prompt=' + encodeURIComponent(v) : 'https://gemini.google.com/app';
+      if (v) copy(v);
+    } else {
+      u = v ? 'https://www.google.com/search?q=' + encodeURIComponent(v) : 'https://www.google.com';
+    }
+    window.open(u, '_blank', 'noopener');
+    q.value = '';
+  }
+  function copy(text){
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).catch(() => legacyCopy(text)); return; } } catch(e) {}
+    legacyCopy(text);
+  }
+  function legacyCopy(text){
+    try {
+      const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    } catch(e) {}
+  }
+  document.getElementById('searchForm').addEventListener('submit', e => { e.preventDefault(); go('gemini'); });
+  document.getElementById('btnGoogle').addEventListener('click', () => go('google'));
+})();
+
+/* ---------- News ---------- */
+(async function news(){
+  const card = document.getElementById('newsCard'), list = document.getElementById('newsList'), src = document.getElementById('newsSrc');
+  if (!CONFIG.news) { card.remove(); return; }
+  const n = CONFIG.newsAnzahl || 4;
+  const ago = d => { const m = Math.round((Date.now() - d) / 60000); return m < 60 ? m + ' min' : Math.round(m/60) + ' h'; };
+  let items = [];
+  try {
+    if (CONFIG.news === 'tagesschau') {
+      const j = await (await fetch('https://www.tagesschau.de/api2u/homepage/')).json();
+      items = (j.news || []).filter(x => x.title && x.detailsweb).slice(0, n).map(x => ({t: x.title, u: x.detailsweb, d: new Date(x.date)}));
+      src.textContent = 'tagesschau.de';
+    } else if (CONFIG.news === 'bbc') {
+      const j = await (await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://feeds.bbci.co.uk/news/world/rss.xml'))).json();
+      items = (j.items || []).slice(0, n).map(x => ({t: x.title, u: x.link, d: new Date(x.pubDate.replace(' ', 'T') + 'Z')}));
+      src.textContent = 'BBC World';
+    }
+  } catch(e) {}
+  if (!items.length) { list.innerHTML = '<div class="nm">News unavailable right now</div>'; return; }
+  list.innerHTML = items.map(x => '<a class="nitem" href="' + x.u + '" target="_blank" rel="noopener"><div class="nt">' + x.t.replace(/</g,'&lt;') + '</div><div class="nm">' + (isNaN(x.d) ? '' : ago(x.d) + ' ago') + '</div></a>').join('');
+})();
+
+/* ---------- Wetter (Open-Meteo, ohne API-Key) ---------- */
+(function weather(){
+  const ICONS = {
+    sun:{c:[12,12,4],d:'M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41'},
+    cloudsun:{d:'M12 2v2M4.93 4.93l1.41 1.41M20 12h2M19.07 4.93l-1.41 1.41M15.947 12.65a4 4 0 0 0-5.925-4.128M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z'},
+    cloud:{d:'M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z'},
+    fog:{d:'M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M16 17H7M17 21H9'},
+    drizzle:{d:'M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M8 19v1M8 14v1M16 19v1M16 14v1M12 21v1M12 16v1'},
+    rain:{d:'M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M16 14v6M8 14v6M12 16v6'},
+    snow:{d:'M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M8 15h.01M8 19h.01M12 17h.01M12 21h.01M16 15h.01M16 19h.01'},
+    storm:{d:'M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973M13 12l-3 5h4l-3 5'}
+  };
+  const key = c => c<=1?'sun':c===2?'cloudsun':c===3?'cloud':(c===45||c===48)?'fog':c<58?'drizzle':c<70?'rain':c<79?'snow':(c===85||c===86)?'snow':c<95?'rain':'storm';
+  function descOf(c){
+    const m = {0:'Clear',1:'Mostly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Fog'};
+    if (m[c] != null) return m[c];
+    return c<58?'Drizzle':c<70?'Rain':c<79?'Snow':(c===85||c===86)?'Snow showers':c<95?'Showers':'Thunderstorm';
+  }
+  function icon(c, sz){
+    const K = ICONS[key(c)];
+    return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">' +
+      (K.c ? '<circle cx="'+K.c[0]+'" cy="'+K.c[1]+'" r="'+K.c[2]+'"></circle>' : '') + '<path d="'+K.d+'"></path></svg>';
+  }
+
+  // Letzten Standort merken, damit die Seite sofort rendert (Freigabe selbst merkt sich Chrome pro Website)
+  function locate(){
+    const fb = () => byName(CONFIG.stadt);
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem('ntd_loc') || 'null'); } catch(e) {}
+    if (cached && Date.now() - cached.t < 6*3600*1000) load(cached.lat, cached.lon, cached.name);
+    if (CONFIG.standortAbfragen && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(p => {
+        if (cached && Math.abs(cached.lat - p.coords.latitude) < 0.01 && Math.abs(cached.lon - p.coords.longitude) < 0.01) return;
+        load(p.coords.latitude, p.coords.longitude, null);
+      }, () => { if (!cached) fb(); }, {timeout: 8000, maximumAge: 600000});
+    } else if (!cached) fb();
+  }
+  async function byName(n){
+    try {
+      const g = await (await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(n) + '&count=1&language=en')).json();
+      const r = (g.results && g.results[0]) || {latitude:53.14, longitude:8.21, name:'Oldenburg'};
+      load(r.latitude, r.longitude, r.name);
+    } catch(e) { load(53.14, 8.21, 'Oldenburg'); }
+  }
+  async function load(lat, lon, name){
+    document.getElementById('radar').src = 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=%C2%B0C&metricWind=km%2Fh&zoom=8&overlay=radar&product=radar&level=surface&lat=' + lat.toFixed(3) + '&lon=' + lon.toFixed(3) + '&marker=true&message=false&calendar=now';
+    if (!name) {
+      try {
+        const r = await (await fetch('https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=en')).json();
+        name = r.city || r.locality || '';
+      } catch(e) { name = ''; }
+    }
+    try { localStorage.setItem('ntd_loc', JSON.stringify({lat, lon, name, t: Date.now()})); } catch(e) {}
+    try {
+      const d = await (await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=7')).json();
+      document.getElementById('temp').textContent = Math.round(d.current.temperature_2m) + '°';
+      document.getElementById('desc').textContent = descOf(d.current.weather_code) + (name ? ' · ' + name : '');
+      document.getElementById('curIcon').innerHTML = icon(d.current.weather_code, 44);
+      document.getElementById('forecast').innerHTML = d.daily.time.map((t, i) =>
+        '<div class="frow' + (i === 0 ? ' today' : '') + '"><span class="d">' + (i === 0 ? 'Today' : new Date(t + 'T12:00').toLocaleDateString('en-GB', {weekday:'short'})) + '</span>' +
+        '<span class="i">' + icon(d.daily.weather_code[i], 20) + '</span>' +
+        '<span class="mx">' + Math.round(d.daily.temperature_2m_max[i]) + '°</span>' +
+        '<span class="mn">' + Math.round(d.daily.temperature_2m_min[i]) + '°</span></div>'
+      ).join('');
+    } catch(e) {
+      document.getElementById('desc').textContent = 'Weather unavailable right now';
+    }
+  }
+  locate();
+})();
+</script>
+</body>
+</html>
